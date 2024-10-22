@@ -28,8 +28,12 @@ kotlin {
     }
 
     sourceSets {
+        val commonMain by getting {
+            dependencies {
+            }
+        }
         commonMain.dependencies {
-            //put your multiplatform dependencies here
+                      // Para Android
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

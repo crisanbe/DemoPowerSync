@@ -11,7 +11,7 @@ val AppSchema: Schema = Schema(
         Table(
             name = "uso",
             columns = listOf(
-                Column.text("id"),
+                // No declares la columna "id", ya que es añadida automáticamente por PowerSync
                 Column.text("name"),           // Nombre del elemento
                 Column.text("created_at"),     // Fecha de creación
                 Column.text("owner_id")        // ID del propietario
@@ -22,7 +22,6 @@ val AppSchema: Schema = Schema(
         )
     )
 )
-
 
 // Clase de datos para los elementos de uso
 data class UsoItem(

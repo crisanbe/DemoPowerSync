@@ -2,11 +2,13 @@ package com.metro.demopowersyncmongo.android.powersync
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Logger
 import com.powersync.PowerSyncDatabase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 internal class ListContent(
     private val db: PowerSyncDatabase,
@@ -22,14 +24,20 @@ internal class ListContent(
     // Observa los elementos de la lista (sincronizado con MongoDB a través de PowerSync)
     fun watchItems(): Flow<List<UsoItem>> {
         return db.watch("SELECT * FROM uso", mapper = { cursor ->
+            val id = cursor.getString(0) ?: ""        // Verifica que no sea null
+            val name = cursor.getString(1) ?: "N/A"   // Valor por defecto si es null
+            val createdAt = cursor.getString(2) ?: "N/A" // Valor por defecto si es null
+            val ownerId = cursor.getString(3) ?: "N/A"   // Valor por defecto si es null
+
             UsoItem(
-                id = cursor.getString(0)!!,  // PowerSync ya maneja la columna `id`
-                name = cursor.getString(1)!!,
-                createdAt = cursor.getString(2)!!,
-                ownerId = cursor.getString(3)!!
+                id = id,
+                name = name,
+                createdAt = createdAt,
+                ownerId = ownerId
             )
         })
     }
+
 
     // Elimina un elemento de la lista
     fun onItemDeleteClicked(item: UsoItem) {
@@ -46,14 +54,17 @@ internal class ListContent(
 
         viewModelScope.launch {
             db.writeTransaction {
-                // Aquí solo se insertan los tres valores. El ID es gestionado por PowerSync.
                 it.execute(
-                    "INSERT INTO uso (name, created_at, owner_id) VALUES (?, datetime(), ?)",
+                    "INSERT INTO uso (id, name, created_at, owner_id) VALUES (uuid(),?, datetime(), ?)",
                     listOf(_inputText.value, userId)
                 )
             }
             _inputText.value = ""
+
+            // Inicia la sincronización manualmente después de la inserción
+            Logger.i("Iniciando la sincronización manual con MongoDB.")
         }
+
     }
 
     // Actualiza un elemento de la lista

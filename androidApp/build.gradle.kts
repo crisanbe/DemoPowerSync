@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.sqldelight)
+    kotlin("plugin.serialization") version "1.5.31"  // Ajusta la versión a la que estás usando
+
 }
 
 android {
@@ -48,10 +50,13 @@ dependencies {
     implementation("com.powersync:core:1.0.0-BETA5")
     implementation("co.powersync:powersync-sqlite-core:0.3.1")
     runtimeOnly("com.powersync:persistence:1.0.0-BETA5")
-    //implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.2.0")
-    //implementation("org.mongodb:mongodb-driver-sync:4.10.1")  // Usa una versión adecuada para MongoDB
 
-
+    // Dependencias de Ktor Client para HTTP
+    implementation("io.ktor:ktor-client-core:2.3.12")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.12")
+    implementation("io.ktor:ktor-client-json:2.1.3")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.12")
+    implementation("io.ktor:ktor-client-okhttp:2.3.12")
     implementation(projects.shared)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
